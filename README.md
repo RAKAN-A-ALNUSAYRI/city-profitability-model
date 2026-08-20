@@ -41,26 +41,28 @@ A star schema: measurements in the middle, descriptions around it. It keeps the
 joins shallow and means a question like "profit by territory by month" is one
 query instead of a chain of them.
 
-## Run it
+## The queries
 
-```bash
-python backend/analyze.py
-```
+`queries.sql` walks through it: the totals, the top cities by profit, then the
+same list sorted by margin so the mismatch is visible. Each query has a note
+explaining what it answers. Load the CSVs as `sales`, `cities`, `items` and
+`dates` in any SQL tool and they run as-is.
 
-Builds the SQLite database from the CSVs and prints the totals, the top cities
-by profit, and the margin spread. Standard library only.
+Two of the dimension files (`DimCustomer`, `DimStockItem`) have a report title
+sitting above the real header row — a normal artefact of exports from company
+systems. That row has to come off before the file loads correctly.
 
 ## Files
 
 ```
 data/FactSale.csv    the fact table
 data/Dim*.csv        the five dimension tables
-backend/analyze.py   builds the database and runs the queries
+queries.sql          the SQL behind every number here
 ```
 
 ## Tools
 
-SQL, SQLite, Python, dimensional modelling
+SQL, SQLite, dimensional modelling
 
 ---
 Rakan Ahmed Al-Nusayri — [github.com/RaKaN-DaTa](https://github.com/RaKaN-DaTa)
