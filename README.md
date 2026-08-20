@@ -1,52 +1,66 @@
-# Wide World Importers — Profitability Analysis
-
-تحليل ربحية على نموذج نجمي — 26,397 سطر مبيعات و5 جداول أبعاد.
+# City Profitability Model
 
 ![preview](preview.jpg)
 
-**The question:** We know which cities sell the most. But do the biggest
-sellers actually make the most *profit* — or are we chasing revenue that
-costs us margin?
+A sales dataset modelled properly — one fact table, five dimensions — so I could
+test a claim that sounds obvious and turns out not to be: that the city selling
+the most is the city worth the most.
 
-**What I did:**
-- Modelled the data as a proper **star schema**: one fact table (`FactSale`,
-  26,397 rows) joined to 5 dimensions — City, Customer, Date, StockItem, Employee
-- Loaded it into SQLite with a Python ETL script (`backend/analyze.py`)
-- Wrote SQL to compare **revenue rank vs. margin rank** per city, which is
-  where the real answer lives
+## What I found
 
-**What I found:**
-| Metric | Value |
+| | |
 |---|---|
 | Sales lines | 26,397 |
 | Revenue (inc. tax) | $22.86M |
 | Profit | $9.92M |
-| Overall profit margin | 43.4% |
-| Units sold | 1,028,670 |
+| Overall margin | 43.4% |
+| Units | 1,028,670 |
 
-The headline: **revenue rank ≠ margin rank.** Meadowdale is only the 3rd
-biggest city by profit, but it has the *best* margin at **47.3%**. Meanwhile
-Venersborg does comparable revenue ($371K vs $374K) at just **40.8%** margin —
-a 6.5-point gap on nearly identical sales volume. That gap is where the money
-is, and it's invisible if you only rank cities by total sales.
+Akhiok is the biggest city by a distance — $624K in revenue, 53% ahead of the
+next one. Its margin is 41.6%, below the company average.
 
-**Tools:** SQL (star-schema joins, aggregation), Python (stdlib `csv`/`sqlite3`),
-Power BI (data modelling)
+Meadowdale sells a third of that and earns 47.3%. Across the 73 cities above
+$150K, the gap between best and worst margin is 6.5 points, and it has no
+relationship to size — plot revenue against margin and the dots sit flat.
 
-## Run it yourself
+So "our biggest city" and "our best city" are two different lists. If sales
+effort follows revenue alone, it follows the wrong one.
+
+## The model
+
+```
+FactSale (26,397 rows)
+   |- DimCity        city, state, country, territory
+   |- DimCustomer
+   |- DimDate
+   |- DimStockItem
+   |- DimEmployee
+```
+
+A star schema: measurements in the middle, descriptions around it. It keeps the
+joins shallow and means a question like "profit by territory by month" is one
+query instead of a chain of them.
+
+## Run it
 
 ```bash
 python backend/analyze.py
 ```
 
-No dependencies — pure Python standard library.
+Builds the SQLite database from the CSVs and prints the totals, the top cities
+by profit, and the margin spread. Standard library only.
 
 ## Files
 
 ```
-data/            FactSale.csv + 5 dimension tables (City, Customer, Date, StockItem, Employee)
-backend/analyze.py   builds the SQLite model and prints the analysis above
+data/FactSale.csv    the fact table
+data/Dim*.csv        the five dimension tables
+backend/analyze.py   builds the database and runs the queries
 ```
 
+## Tools
+
+SQL, SQLite, Python, dimensional modelling
+
 ---
-Rakan Ahmed Al-Nusayri · rakanalnsyry8@gmail.com
+Rakan Ahmed Al-Nusayri — [github.com/RaKaN-DaTa](https://github.com/RaKaN-DaTa)
