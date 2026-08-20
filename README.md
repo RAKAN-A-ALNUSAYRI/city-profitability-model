@@ -55,9 +55,10 @@ systems. That row has to come off before the file loads correctly.
 ## Files
 
 ```
-data/FactSale.csv    the fact table
-data/Dim*.csv        the five dimension tables
-queries.sql          the SQL behind every number here
+data/FactSale.csv                     the fact table
+data/Dim*.csv                         the five dimension tables
+queries.sql                           the SQL behind every number here
+city-profitability-dashboard.xlsx     an interactive Excel dashboard over the same data
 ```
 
 ## Tools
